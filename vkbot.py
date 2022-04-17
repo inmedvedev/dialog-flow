@@ -7,11 +7,37 @@ env = Env()
 env.read_env()
 
 
-def echo(event, vk_api):
+def detect_intent_texts(event, vk_api):
+    project_id = env('PROJECT_ID')
+    language = env('BOT_LANGUAGE')
+    from google.cloud import dialogflow
+
+    session_client = dialogflow.SessionsClient()
+
+    session = session_client.session_path(project_id, event.user_id)
+    print("Session path: {}\n".format(session))
+
+    text_input = dialogflow.TextInput(text=event.text, language_code=language)
+
+    query_input = dialogflow.QueryInput(text=text_input)
+
+    response = session_client.detect_intent(
+        request={"session": session, "query_input": query_input}
+    )
+
+    print("=" * 20)
+    print("Query text: {}".format(response.query_result.query_text))
+    print(
+        "Detected intent: {} (confidence: {})\n".format(
+            response.query_result.intent.display_name,
+            response.query_result.intent_detection_confidence,
+        )
+    )
+    print("Fulfillment text: {}\n".format(response.query_result.fulfillment_text))
     vk_api.messages.send(
         user_id=event.user_id,
-        message=event.text,
-        random_id=random.randint(1,1000)
+        message=response.query_result.fulfillment_text,
+        random_id=random.randint(1, 1000)
     )
 
 
@@ -21,4 +47,4 @@ if __name__ == "__main__":
     longpoll = VkLongPoll(vk_session)
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            echo(event, vk_api)
+            detect_intent_texts(event, vk_api)
