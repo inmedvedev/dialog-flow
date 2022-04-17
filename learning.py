@@ -1,13 +1,12 @@
+from google.cloud import dialogflow
 from environs import Env
 import json
 
 
 def create_intent(project_id, display_name, training_phrases_parts, message_texts):
-    from google.cloud import dialogflow
-
     intents_client = dialogflow.IntentsClient()
-
     parent = dialogflow.AgentsClient.agent_path(project_id)
+
     training_phrases = []
     for training_phrases_part in training_phrases_parts:
         part = dialogflow.Intent.TrainingPhrase.Part(text=training_phrases_part)
@@ -17,16 +16,12 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
     answer_phrases = [message_texts]
     text = dialogflow.Intent.Message.Text(text=answer_phrases)
     message = dialogflow.Intent.Message(text=text)
-
     intent = dialogflow.Intent(
         display_name=display_name, training_phrases=training_phrases, messages=[message]
     )
-
-    response = intents_client.create_intent(
+    intents_client.create_intent(
         request={"parent": parent, "intent": intent}
     )
-
-    print("Intent created: {}".format(response))
 
 
 if __name__ == '__main__':
