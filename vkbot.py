@@ -24,7 +24,8 @@ def detect_intent_texts(event, vk_api):
     response = session_client.detect_intent(
         request={"session": session, "query_input": query_input}
     )
-
+    if response.query_result.intent.is_fallback:
+        return None
     print("=" * 20)
     print("Query text: {}".format(response.query_result.query_text))
     print(
