@@ -37,4 +37,3 @@ if __name__ == '__main__':
         file_contents = json.load(file)
     for intent_name, training_data in file_contents.items():
         create_intent(project_id, intent_name, training_data['questions'], training_data['answer'])
-
