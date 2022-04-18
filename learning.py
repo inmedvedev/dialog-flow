@@ -42,4 +42,3 @@ if __name__ == '__main__':
             create_intent(project_id, intent_name, training_data['questions'], training_data['answer'])
     except Exception as error:
         logger.exception(error)
-
