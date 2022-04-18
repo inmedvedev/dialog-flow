@@ -1,2 +1,2 @@
-bot: python vkbot.py
-bot: python tgbot.py
+bot-vk: python vkbot.py
+bot-tg: python tgbot.py
